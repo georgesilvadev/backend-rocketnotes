@@ -12,22 +12,22 @@ class NotesController {
       user_id,
     });
 
-    const linksInsert = links.map((link) => {
+    const linksInsert = links.map(link => {
       // vai percorrer cada link
       return {
         note_id,
-        url: link, //e vai retornar o note_id e a url
-      };
+        url: link //e vai retornar o note_id e a url
+      }
     });
 
     await knex("links").insert(linksInsert);
 
-    const tagsInsert = tags.map((name) => {
+    const tagsInsert = tags.map(name => {
       return {
         note_id,
         name,
-        user_id,
-      };
+        user_id
+      }
     });
 
     await knex("tags").insert(tagsInsert);
@@ -76,7 +76,8 @@ class NotesController {
         .where("notes.user_id", user_id) //para filtar baseado no id do usuário
         .whereLike("notes.title", `%${title}%`)
         .whereIn("name", filterTags)
-        .innerJoin("notes", "notes.id", "tags.notes_id")
+        .innerJoin("notes", "notes.id", "tags.note_id")
+        .orderBy("notes.title")
 
     }else{
         notes = await knex("notes")
@@ -84,7 +85,18 @@ class NotesController {
         .whereLike("title", `%${title}%`)
         .orderBy("title");
     }
-    return response.json(notes);
+
+    const userTags = await knex("tags").where({ user_id })
+    const notesWithTags = notes.map(note => {
+      const noteTags = userTags.filter(tag => tag.note_id === note.id)
+
+      return{
+        ...note,
+        tags: noteTags
+      }
+    })
+
+    return response.json(notesWithTags);
   }
 }
 
