@@ -1,4 +1,4 @@
-exports.up = knex => knex.schema.createTable("notes", table => {
+exports.up = knex => knex.schema.createTable("note", table => {
     table.increments("id"); //o id da nota, que é automático e incremental.
     table.text("title"); //título da nota.
     table.text("description"); //conteúdo da nota.
@@ -9,4 +9,4 @@ exports.up = knex => knex.schema.createTable("notes", table => {
     table.timestamp("updated_at").default(knex.fn.now()); //O padrão dele é devolver a data e horário de quando uma nota foi atualizada.
   });
 
-exports.down = knex => knex.schema.dropTable("notes");
+exports.down = knex => knex.schema.dropTable("note");
