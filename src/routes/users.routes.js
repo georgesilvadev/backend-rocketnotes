@@ -5,6 +5,7 @@ const { Router } = require("express");
 
 //importar o controller, 2 ponto e barra para sair da pasta routes e poder buscar o arquivo na pasta de controllers:
 const UsersController = require("../controllers/UsersController")
+const ensureAuthenticated = require("../middlewares/ensureAuthenticated")
 
 //Executando Router
 const usersRoutes = Router();
@@ -34,6 +35,6 @@ const usersController = new UsersController();
 //Agora no lugar de passar toda essa função, basta colocar usersController.create
 //Utilizando Middlewares: agora antes da função create ser chamada, temos o middleware que vai recuperar a requisição, response e next
 usersRoutes.post("/", usersController.create);
-usersRoutes.put("/:id", usersController.update);
+usersRoutes.put("/", ensureAuthenticated, usersController.update);
 
 module.exports = usersRoutes;
