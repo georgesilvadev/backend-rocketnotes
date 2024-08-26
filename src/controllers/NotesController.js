@@ -5,7 +5,7 @@ class NotesController {
   async create(request, response) {
     //https://www.notion.so/Explica-o-desse-peda-o-de-c-digo-73072e75b9ca49ce954dd17cf2e53e86?pvs=4
     const { title, description, tags, links } = request.body;
-    const { user_id } = request.params;
+    const user_id = request.user.id;
 
     const [note_id] = await knex("notes").insert({
       title,
@@ -61,7 +61,9 @@ class NotesController {
   }
 
   async index(request, response) {
-    const { title, user_id, tags } = request.query;
+    const { title, tags } = request.query;
+
+    const user_id = request.user.id;
 
     let notes;
 
