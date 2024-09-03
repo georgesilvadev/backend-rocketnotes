@@ -2,13 +2,17 @@
 
 //Importando o route de dentro do express.
 const { Router } = require("express");
+const multer = require("multer")
+const uploadConfig = require("../configs/upload")
 
 //importar o controller, 2 ponto e barra para sair da pasta routes e poder buscar o arquivo na pasta de controllers:
 const UsersController = require("../controllers/UsersController")
+const UserAvatarController = require("../controllers/UserAvatarController")
 const ensureAuthenticated = require("../middlewares/ensureAuthenticated")
 
 //Executando Router
 const usersRoutes = Router();
+const upload = multer(uploadConfig.MULTER)
 
 //Exemplo de middleware
 
@@ -30,11 +34,13 @@ const usersRoutes = Router();
 //como o UsersController é uma classe, precisamos instanciar ele na memória(nada mais que realocar um espaço em memória):
 //criar um cont usersController = new que é uma nova instância UsersController()
 const usersController = new UsersController();
+const usersAvatarController = new UserAvatarController();
 
 //Construção da rota
 //Agora no lugar de passar toda essa função, basta colocar usersController.create
 //Utilizando Middlewares: agora antes da função create ser chamada, temos o middleware que vai recuperar a requisição, response e next
 usersRoutes.post("/", usersController.create);
 usersRoutes.put("/", ensureAuthenticated, usersController.update);
+usersRoutes.patch("/avatar", ensureAuthenticated, upload.single("avatar"), usersAvatarController.update);
 
 module.exports = usersRoutes;
